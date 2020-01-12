@@ -66,7 +66,7 @@ class DataProcessor(object):
 class CSVProcessor(DataProcessor):
     """Processor for the csv data set."""
 
-    def get_examples(self, data_path):
+    def get_train_examples(self, data_path):
         """See base class."""
         return self._create_examples(self._read_csv(data_path))
 
