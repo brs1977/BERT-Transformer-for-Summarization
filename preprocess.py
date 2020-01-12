@@ -1,6 +1,7 @@
 import torch
 from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler,
                               TensorDataset)
+import pandas as pd
 import csv
 import os
 import logging
@@ -62,6 +63,24 @@ class DataProcessor(object):
                 lines.append(line)
             return lines
 
+class CSVProcessor(DataProcessor):
+    """Processor for the csv data set."""
+
+    def get_examples(self, data_path):
+        """See base class."""
+        return self._create_examples(self._read_csv(data_path))
+
+    def _read_csv(data_path):      
+      return pd.read_csv(data_path, encoding='utf8')
+    
+    def _create_examples(self, df):
+        examples = [] 
+        for row in df.iterrows():
+            # lines: id, summary, text
+            guid, (src,tgt) = row
+            examples.append(InputExample(guid=guid, src=src, tgt=tgt))
+        return examples          
+          
 class LCSTSProcessor(DataProcessor):
     """Processor for the LCSTS data set."""
 
