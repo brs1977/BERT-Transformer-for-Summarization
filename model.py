@@ -23,13 +23,13 @@ class BertDecoder(nn.Module):
         self.len_max_seq = decoder_config['len_max_seq']
         d_word_vec = decoder_config['d_word_vec']
         n_layers = decoder_config['n_layers']
-        n_head = decoder_config['n_head']
+        n_head = decoder_config['num_head']
         d_k = decoder_config['d_k']
         d_v = decoder_config['d_v']
         d_model = decoder_config['d_model']
         d_inner = decoder_config['d_inner']  # should be equal to d_model
         vocab_size = decoder_config['vocab_size']
-
+        
         self.device = device
         self.n_position = self.len_max_seq + 1
 
