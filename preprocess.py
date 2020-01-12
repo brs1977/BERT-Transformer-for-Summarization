@@ -70,7 +70,7 @@ class CSVProcessor(DataProcessor):
         """See base class."""
         return self._create_examples(self._read_csv(data_path))
 
-    def _read_csv(data_path):      
+    def _read_csv(self, data_path):      
       return pd.read_csv(data_path, encoding='utf8')
     
     def _create_examples(self, df):
