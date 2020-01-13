@@ -105,7 +105,7 @@ class CSVProcessor():
             if np.random.random()>self.random_split:
                 self.train.append(InputExample(guid=guid, src=src, tgt=tgt))
             else:
-                self.test.append(InputExample(guid=guid, src=src, tgt=tgt))
+                self.valid.append(InputExample(guid=guid, src=src, tgt=tgt))
           
 class LCSTSProcessor(DataProcessor):
     """Processor for the LCSTS data set."""
