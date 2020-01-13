@@ -2,6 +2,7 @@ import torch
 from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler,
                               TensorDataset)
 import pandas as pd
+import numpy as np
 import csv
 import os
 import logging
@@ -63,23 +64,48 @@ class DataProcessor(object):
                 lines.append(line)
             return lines
 
-class CSVProcessor(DataProcessor):
+class CSVProcessor():
     """Processor for the csv data set."""
 
-    def get_train_examples(self, data_path):
-        """See base class."""
-        return self._create_examples(self._read_csv(data_path))
+    def __init__(self, random_split = .1):
+        self.random_split = random_split
+        self.train = [] 
+        self.valid = [] 
+        self.test = [] 
 
-    def _read_csv(self, data_path):      
-      return pd.read_csv(data_path, encoding='utf8')
+    def get_test_examples(self, data_path, nrows = None):
+        if len(self.test)>0:
+            return self.test
+
+        df = self._read_csv(data_path, nrows)
+        for row in df.iterrows():
+            # lines: id, summary, text
+            guid, src = row
+            if np.random.random()>self.random_split:
+                self.test.append(InputExample(guid=guid, src=src[0]))
+        return self.test
+
+    def get_valid_examples(self, data_path, nrows = None):
+        self._create_examples(self._read_csv(data_path, nrows))
+        return self.valid
+
+    def get_train_examples(self, data_path, nrows = None):
+        self._create_examples(self._read_csv(data_path, nrows))
+        return self.train
+
+    def _read_csv(self, data_path, nrows = None):      
+      return pd.read_csv(data_path, encoding='utf8', nrows = nrows)
     
     def _create_examples(self, df):
-        examples = [] 
+        if len(self.train)>0:
+            return
         for row in df.iterrows():
             # lines: id, summary, text
             guid, (src,tgt) = row
-            examples.append(InputExample(guid=guid, src=src, tgt=tgt))
-        return examples          
+            if np.random.random()>self.random_split:
+                self.train.append(InputExample(guid=guid, src=src, tgt=tgt))
+            else:
+                self.test.append(InputExample(guid=guid, src=src, tgt=tgt))
           
 class LCSTSProcessor(DataProcessor):
     """Processor for the LCSTS data set."""
